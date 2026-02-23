@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-XiaoEt (学术大拿) is a Chrome extension (Manifest V3) for academic translation. It supports text selection translation, full-document translation (with bilingual comparison mode), OCR-based image translation, and an embedded PDF viewer. Written in vanilla JavaScript with no build system or package manager.
+AcadMaster (学术大拿) is a Chrome extension (Manifest V3) for academic translation. It supports text selection translation, full-document translation (with bilingual comparison mode), OCR-based image translation, and an embedded PDF viewer. Written in vanilla JavaScript with no build system or package manager.
 
 ## Development Commands
 
 ### Loading the Extension
 1. Open Chrome -> `chrome://extensions/` -> Enable "Developer mode"
-2. Click "Load unpacked" -> select the `xiaoet-extension-main` folder
+2. Click "Load unpacked" -> select the `acadmaster` folder
 3. After code changes, click the refresh icon on the extension card to reload
 
 ### Testing
@@ -25,7 +25,7 @@ No automated tests exist. Manual testing:
 - Settings -> "翻译历史" tab to view/search/clear translation history
 
 ### Packaging
-Zip the `xiaoet-extension-main` folder for Chrome Web Store submission. No build step required.
+Zip the `acadmaster` folder for Chrome Web Store submission. No build step required.
 
 ## Architecture
 
