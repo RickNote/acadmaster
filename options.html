@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学术大拿 - 控制中心 (Dashboard)</title>
+    <!-- Use system font stack instead of Google Fonts for offline support and privacy -->
+    <style>
+        :root {
+            --primary: #4136f1;
+            --primary-gradient: linear-gradient(135deg, #4136f1 0%, #8b5cf6 100%);
+            --bg-page: #f0f4f9;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --text-main: #1f1f1f;
+            --text-sub: #5f6368;
+            --border: #dee1e5;
+            --hover: #f1f3f4;
+            --glass: rgba(255, 255, 255, 0.7);
+            --sidebar-width: 280px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-page: #131314;
+            --bg-sidebar: #1e1e20;
+            --bg-card: #1e1e20;
+            --text-main: #e3e3e3;
+            --text-sub: #b3b3b3;
+            --border: #444746;
+            --hover: #2d2d2f;
+            --glass: rgba(30, 30, 32, 0.7);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        *:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 12px;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 12px 32px;
+        }
+
+        .brand svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--primary);
+            filter: drop-shadow(0 2px 4px rgba(65, 54, 241, 0.2));
+        }
+
+        .brand h2 {
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 20px;
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex: 1;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            border-radius: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: var(--text-sub);
+            font-weight: 500;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .nav-item:hover {
+            background: var(--hover);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: #e1eaff;
+            color: var(--primary);
+        }
+
+        [data-theme="dark"] .nav-item.active {
+            background: #2d334a;
+            color: #d2e3fc;
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+            opacity: 0.8;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            flex: 1;
+            padding: 40px 60px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            position: relative;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            max-width: 900px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 32px;
+            margin: 0 0 40px;
+            font-weight: 500;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            border-color: rgba(65, 54, 241, 0.2);
+        }
+
+        h2 {
+            font-size: 18px;
+            margin: 0 0 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .desc {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text-main);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            background: rgba(65, 54, 241, 0.02);
+            box-shadow: 0 0 0 4px rgba(65, 54, 241, 0.08);
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        .switch-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Buttons */
+        .action-bar {
+            position: sticky;
+            bottom: 40px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: flex-end;
+            pointer-events: none;
+        }
+
+        .btn-save {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 28px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: 0 8px 16px rgba(65, 54, 241, 0.2);
+            transition: var(--transition);
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(65, 54, 241, 0.3);
+        }
+        .btn-save:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Features Intro Styling */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-item {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(65, 54, 241, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .feature-item h3 {
+            margin: 10px 0 5px;
+            font-size: 16px;
+        }
+
+        .feature-item p {
+            font-size: 13px;
+            color: var(--text-sub);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Toast Message */
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1f1f1f;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 1000;
+            transition: var(--transition);
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Help/Usage Styling */
+        .usage-step {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .step-num {
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            margin: 0 0 6px;
+            font-size: 15px;
+        }
+
+        .step-content p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-sub);
+            line-height: 1.5;
+        }
+
+        code {
+            background: var(--hover);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        /* API Key row with test button */
+        .api-key-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .api-key-row input {
+            flex: 1;
+        }
+        .btn-test {
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text-sub);
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+        .btn-test:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .btn-test.success {
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+        .btn-test.fail {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        /* History section */
+        .history-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .history-item {
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            transition: var(--transition);
+        }
+        .history-item:hover {
+            border-color: rgba(65, 54, 241, 0.2);
+        }
+        .history-item .original {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .history-item .translated {
+            font-size: 14px;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+        .history-item .meta {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-top: 8px;
+            display: flex;
+            gap: 12px;
+        }
+        .history-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .history-toolbar input {
+            max-width: 300px;
+        }
+        .btn-clear-history {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text-sub);
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-clear-history:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        .btn-secondary {
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text-sub);
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .inline-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .status-box {
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--text-sub);
+            line-height: 1.6;
+            background: var(--hover);
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            white-space: pre-wrap;
+        }
+        .status-box.error {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        .status-box.success {
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+        .quick-setup-card {
+            border: 1px solid rgba(65, 54, 241, 0.2);
+            background: linear-gradient(135deg, rgba(65, 54, 241, 0.06), rgba(139, 92, 246, 0.05));
+        }
+        .quick-setup-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .quick-setup-status {
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--text-sub);
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.45);
+            white-space: pre-wrap;
+        }
+        [data-theme="dark"] .quick-setup-status {
+            background: rgba(30, 30, 32, 0.35);
+        }
+        .quick-preset-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .btn-preset {
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 8px 14px;
+            background: transparent;
+            color: var(--text-main);
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-preset:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .btn-preset.active {
+            border-color: var(--primary);
+            color: #fff;
+            background: var(--primary-gradient);
+            box-shadow: 0 6px 14px rgba(65, 54, 241, 0.2);
+        }
+        .range-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .range-row input[type="range"] {
+            flex: 1;
+        }
+        .tm-stats {
+            font-size: 13px;
+            color: var(--text-sub);
+            line-height: 1.7;
+            margin-top: 8px;
+            padding: 10px 12px;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            background: var(--hover);
+            white-space: pre-wrap;
+        }
+        .tm-toolbar {
+            display: grid;
+            grid-template-columns: 1fr 180px;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .tm-list {
+            max-height: 280px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px;
+            background: var(--bg-card);
+        }
+        .tm-item {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+        .tm-item:last-child {
+            margin-bottom: 0;
+        }
+        .tm-item-source {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+        .tm-item-target {
+            font-size: 13px;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+        .tm-item-meta {
+            margin-top: 6px;
+            font-size: 11px;
+            color: var(--text-sub);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .tm-empty {
+            color: var(--text-sub);
+            text-align: center;
+            padding: 18px;
+            font-size: 13px;
+        }
+        .tm-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+        }
+        .tm-modal.hidden {
+            display: none;
+        }
+        .tm-modal-card {
+            width: min(560px, calc(100vw - 28px));
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+            padding: 18px;
+        }
+        .tm-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .tm-modal-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        .tm-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .tm-modal-status {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-sub);
+            min-height: 18px;
+        }
+        .tm-modal-status.error {
+            color: #ef4444;
+        }
+        .tm-modal-status.success {
+            color: #22c55e;
+        }
+        .tm-modal-status.warning {
+            color: #f59e0b;
+        }
+        .tm-field-error {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.14) !important;
+        }
+        .tm-field-warning {
+            border-color: #f59e0b !important;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.14) !important;
+        }
+        .history-empty {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-sub);
+        }
+
+        .advanced-settings-card.collapsed {
+            display: none;
+        }
+
+        /* Responsive sidebar */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                padding: 12px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                overflow-x: auto;
+            }
+            .brand {
+                padding: 0 8px 0 0;
+                min-width: max-content;
+            }
+            .brand h2 {
+                font-size: 16px;
+            }
+            .nav-list {
+                display: flex;
+                gap: 4px;
+                flex: 0;
+            }
+            .nav-item {
+                padding: 8px 14px;
+                margin-bottom: 0;
+                white-space: nowrap;
+                font-size: 13px;
+            }
+            .nav-item svg {
+                display: none;
+            }
+            .main-content {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 24px;
+                margin-bottom: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <svg viewBox="0 0 24 24">
+                <path
+                    d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z" />
+            </svg>
+            <h2>学术大拿</h2>
+        </div>
+        <nav class="nav-list">
+            <li class="nav-item active" data-section="intro">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                功能介绍
+            </li>
+            <li class="nav-item" data-section="usage">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                操作指南
+            </li>
+            <li class="nav-item" data-section="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                    <circle cx="12" cy="12" r="3" />
+                </svg>
+                功能设置
+            </li>
+            <li class="nav-item" data-section="about">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="16" x2="12" y2="12" />
+                    <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+                关于项目
+            </li>
+            <li class="nav-item" data-section="history">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                </svg>
+                翻译历史
+            </li>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <!-- Introduction Section -->
+        <section id="section-intro" class="content-section active">
+            <h1>功能介绍</h1>
+            <div style="line-height: 1.8; color: var(--text-main);">
+                <h3>✨ 智能学术翻译</h3>
+                <p>采用 DeepSeek/OpenAI 等顶级 AI 引擎，专为论文语境优化，提供流畅、严谨的翻译结果。</p>
+
+                <h3>📖 专业 PDF 查看器</h3>
+                <p>集成 PDF.js，支持多端渲染、批注、侧边栏目录与自动换行优化。</p>
+
+                <h3>💬 AI 深度对话</h3>
+                <p>内置 AI 助手，可根据当前阅读内容进行总结、追问或代码解析。</p>
+
+                <h3>🖱️ 随心划词翻译</h3>
+                <p>支持在网页上直接划词并快速调出 AI 翻译浮窗，无需跳转页面。</p>
+            </div>
+        </section>
+
+        <!-- Usage Section -->
+        <section id="section-usage" class="content-section">
+            <h1>操作指南</h1>
+            <div style="line-height: 1.8; color: var(--text-main);">
+                <h3>1. 划词翻译</h3>
+                <p>在任意网页上选中一段文字，点击出现的“大拿”图标或按下 <code>Alt + Shift + X</code> 开启翻译。</p>
+
+                <h3>2. PDF 阅读</h3>
+                <p>将本地 PDF 拖入浏览器即可自动启动“学术大拿”阅读界面。支持画笔、高光等批注工具。</p>
+
+                <h3>3. 与 AI 对话</h3>
+                <p>在 PDF 界面右侧点击 AI 助手图标，输入关于文档的问题，AI 会基于当前内容为您解答。</p>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="section-settings" class="content-section">
+            <h1>功能设置</h1>
+
+            <div class="card quick-setup-card" id="quickSetupCard">
+                <h2>快速配置向导</h2>
+                <div class="desc">3 步完成推荐配置：先选场景与优先级，再一键应用预设。应用后你仍可在下方手动微调。</div>
+                <div class="quick-setup-grid">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="quickScenario">1) 使用场景</label>
+                        <select id="quickScenario">
+                            <option value="general">通用阅读</option>
+                            <option value="academic">论文/学术</option>
+                            <option value="technical">技术文档</option>
+                            <option value="business">商务材料</option>
+                            <option value="legal">法律文本</option>
+                            <option value="medical">医学文献</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="quickPriority">2) 目标优先</label>
+                        <select id="quickPriority">
+                            <option value="speed">速度优先</option>
+                            <option value="balanced" selected>平衡</option>
+                            <option value="quality">质量优先</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="quickMemory">3) 记忆增强</label>
+                        <select id="quickMemory">
+                            <option value="on" selected>启用术语库 + TM</option>
+                            <option value="tm-only">仅启用 TM</option>
+                            <option value="off">全部关闭</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="quick-preset-list" id="quickPresetList">
+                    <button class="btn-preset" data-preset="fast" type="button">极速</button>
+                    <button class="btn-preset" data-preset="balanced" type="button">平衡</button>
+                    <button class="btn-preset" data-preset="quality" type="button">高质量</button>
+                    <button class="btn-secondary" id="quickApplyBtn" type="button">按向导应用</button>
+                </div>
+                <div class="quick-setup-status" id="quickSetupStatus">尚未应用快速预设。</div>
+            </div>
+
+            <div class="card" id="settingsLevelCard">
+                <h2>设置层级</h2>
+                <div class="form-group switch-row">
+                    <div>
+                        <label>显示高级设置（术语库 / 翻译记忆）</label>
+                        <div class="desc">关闭后仅显示基础配置，适合快速上手。</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="showAdvancedSettings" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>API 密钥配置</h2>
+                <div class="desc">填入您的 API Key 以启用高级 AI 功能。您的密钥仅保存在本地。</div>
+                <div class="form-group">
+                    <label>DeepSeek API Key</label>
+                    <div class="api-key-row">
+                        <input type="password" id="deepseekKey" placeholder="sk-...">
+                        <button class="btn-test" data-engine="deepseek">测试</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>OpenAI API Key</label>
+                    <div class="api-key-row">
+                        <input type="password" id="openaiKey" placeholder="sk-...">
+                        <button class="btn-test" data-engine="openai">测试</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>DeepL API Key (可选)</label>
+                    <div class="api-key-row">
+                        <input type="password" id="deeplKey" placeholder="DeepL Auth Key">
+                        <button class="btn-test" data-engine="deepl">测试</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>划词翻译设置 (Selection Translation)</h2>
+                <div class="form-group">
+                    <label>翻译引擎</label>
+                    <select id="engineSelect">
+                        <option value="google">Google Translate (免费)</option>
+                        <option value="deepseek">DeepSeek AI (推荐)</option>
+                        <option value="deepl">DeepL Pro</option>
+                        <option value="openai">OpenAI (GPT-4o)</option>
+                        <option value="multi">Multi-Engine Fusion (智能融合)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>模型选择 (Model Selection)</label>
+                    <select id="translationModel">
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>预设风格 (Prompt Style)</label>
+                    <select id="promptProfile">
+                        <option value="default">通用 (默认)</option>
+                        <option value="academic">学术 (严谨)</option>
+                        <option value="literature">文学 (优美)</option>
+                        <option value="business">商务 (正式)</option>
+                        <option value="medical">医学 (专业)</option>
+                        <option value="legal">法律 (精确)</option>
+                        <option value="technical">技术 (准确)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>翻译目标语言</label>
+                    <select id="targetLang">
+                        <option value="zh-CN">简体中文 (Simplified Chinese)</option>
+                        <option value="zh-TW">繁體中文 (Traditional Chinese)</option>
+                        <option value="en">English</option>
+                        <option value="ja">Japanese</option>
+                        <option value="ko">Korean</option>
+                        <option value="de">Deutsch (German)</option>
+                        <option value="fr">Fran&ccedil;ais (French)</option>
+                        <option value="es">Espa&ntilde;ol (Spanish)</option>
+                        <option value="ru">Русский (Russian)</option>
+                        <option value="pt">Portugu&ecirc;s (Portuguese)</option>
+                        <option value="it">Italiano (Italian)</option>
+                        <option value="ar">العربية (Arabic)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>通用选项</h2>
+                <div class="form-group switch-row">
+                    <div>
+                        <label>启用暗黑模式</label>
+                        <div class="desc">跟随系统或手动开启暗黑视觉体验。</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="form-group switch-row">
+                    <div>
+                        <label>修复 PDF 换行符</label>
+                        <div class="desc">翻译时自动拼接因断行产生的多余空格，提升理解准确度。</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="pdfNewlines">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="form-group switch-row">
+                    <div>
+                        <label>双语对照模式</label>
+                        <div class="desc">文档翻译时保留原文，在下方显示翻译结果，方便对照阅读。</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="bilingualMode">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="card advanced-settings-card" data-advanced-card="glossary">
+                <h2>术语库 (Glossary)</h2>
+                <div class="desc">用于强制术语一致性。每行一个映射，格式：<code>源词 => 目标词</code>。例如：<code>transformer => Transformer 模型</code></div>
+                <div class="form-group switch-row">
+                    <div>
+                        <label>启用术语库强制替换</label>
+                        <div class="desc">关闭后保留术语库数据但不应用到翻译结果。</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="glossaryEnabled" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="glossaryInput">术语映射</label>
+                    <textarea id="glossaryInput" placeholder="例如：\ntransformer => Transformer 模型\nfine-tuning => 微调"></textarea>
+                    <div class="inline-actions">
+                        <button id="glossaryValidateBtn" class="btn-secondary" type="button">校验冲突</button>
+                        <button id="glossaryImportBtn" class="btn-secondary" type="button">导入 JSON/TXT</button>
+                        <button id="glossaryExportJsonBtn" class="btn-secondary" type="button">导出 JSON</button>
+                        <button id="glossaryExportTxtBtn" class="btn-secondary" type="button">导出 TXT</button>
+                    </div>
+                    <input type="file" id="glossaryFileInput" accept=".json,.txt,text/plain,application/json" style="display:none;" />
+                    <div id="glossaryStatus" class="status-box">尚未校验。建议保存前点击“校验冲突”。</div>
+                </div>
+                <div class="form-group">
+                    <label for="glossaryPreviewText">术语预览测试</label>
+                    <textarea id="glossaryPreviewText" placeholder="输入一段文本，点击“预览替换效果”"></textarea>
+                    <div class="inline-actions">
+                        <button id="glossaryPreviewBtn" class="btn-secondary" type="button">预览替换效果</button>
+                    </div>
+                    <textarea id="glossaryPreviewResult" readonly placeholder="这里显示术语替换后的结果"></textarea>
+                </div>
+            </div>
+
+            <div class="card advanced-settings-card" data-advanced-card="tm">
+                <h2>翻译记忆 (TM)</h2>
+                <div class="form-group switch-row">
+                    <div>
+                        <label>启用模糊匹配</label>
+                        <div class="desc">开启后，语义相近文本可复用历史翻译；关闭后仅精确命中。</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="tmFuzzyEnabled" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="tmFuzzyThreshold">模糊匹配阈值</label>
+                    <div class="range-row">
+                        <input type="range" id="tmFuzzyThreshold" min="0.65" max="0.95" step="0.01" value="0.82" />
+                        <span id="tmFuzzyThresholdValue">0.82</span>
+                    </div>
+                    <div class="desc">阈值越高越严格，推荐 0.80~0.86。</div>
+                </div>
+                <div class="form-group">
+                    <label for="tmConflictPolicy">冲突处理策略</label>
+                    <select id="tmConflictPolicy">
+                        <option value="alwaysAsk">始终询问（推荐）</option>
+                        <option value="preferLatest">优先最新编辑</option>
+                        <option value="preferHigherHit">优先高命中条目</option>
+                    </select>
+                    <div class="desc">用于 TM 条目原文+目标语发生冲突时的默认处理行为。</div>
+                </div>
+                <div class="form-group">
+                    <label>记忆库状态</label>
+                    <div id="tmStats" class="tm-stats">正在加载翻译记忆统计...</div>
+                    <div class="inline-actions">
+                        <button id="tmRefreshBtn" class="btn-secondary" type="button">刷新统计</button>
+                        <button id="tmImportBtn" class="btn-secondary" type="button">导入 TM(JSON)</button>
+                        <button id="tmExportBtn" class="btn-secondary" type="button">导出 TM(JSON)</button>
+                        <button id="tmClearBtn" class="btn-secondary" type="button">清空 TM</button>
+                    </div>
+                    <input type="file" id="tmFileInput" accept=".json,application/json" style="display:none;" />
+                </div>
+                <div class="form-group">
+                    <label>记忆库检索</label>
+                    <div class="tm-toolbar">
+                        <input type="text" id="tmSearchInput" placeholder="搜索原文或译文..." />
+                        <select id="tmLangFilter">
+                            <option value="">全部语言</option>
+                        </select>
+                    </div>
+                    <div id="tmList" class="tm-list">
+                        <div class="tm-empty">正在加载记忆条目...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button id="saveBtn" class="btn-save">保存所有更改</button>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="section-about" class="content-section">
+            <h1>关于项目</h1>
+            <div class="card">
+                <h2>学术大拿 (XiaoEt)</h2>
+                <p>这是一款致力于消除语言鸿沟的开源效率工具。我们相信，每个人都应该能够平等、高效地获取人类的知识结晶。</p>
+                <div style="margin-top: 24px; display: flex; gap: 20px;">
+                    <div><strong>版本:</strong> v2.1.0-Premium</div>
+                    <div><strong>许可:</strong> MIT License</div>
+                </div>
+            </div>
+            <div class="card">
+                <h2>开发者信息</h2>
+                <p>由 XiaoEt 社区驱动，旨在支持您的学术探索之路。</p>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section id="section-history" class="content-section">
+            <h1>翻译历史</h1>
+            <div class="card">
+                <div class="history-toolbar">
+                    <input type="text" id="historySearch" placeholder="搜索历史记录...">
+                    <button class="btn-clear-history" id="clearHistoryBtn">清空历史</button>
+                </div>
+                <div class="history-list" id="historyList">
+                    <div class="history-empty">暂无翻译历史</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="toast" class="toast">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12" />
+        </svg>
+        设置已成功同步！
+    </div>
+
+    <div id="tmEditModal" class="tm-modal hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="tmEditModalTitle">
+        <div class="tm-modal-card" tabindex="-1">
+            <div class="tm-modal-header">
+                <h3 id="tmEditModalTitle">编辑翻译记忆条目</h3>
+                <button id="tmEditCloseBtn" class="btn-secondary" type="button">关闭</button>
+            </div>
+            <div class="form-group">
+                <label for="tmEditSource">原文</label>
+                <textarea id="tmEditSource" placeholder="可留空"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="tmEditLang">目标语言</label>
+                <input id="tmEditLang" type="text" placeholder="例如 zh-CN / en" />
+            </div>
+            <div class="form-group">
+                <label for="tmEditTranslated">译文</label>
+                <textarea id="tmEditTranslated" placeholder="请输入译文"></textarea>
+                <div id="tmEditStatus" class="tm-modal-status"></div>
+                <div class="inline-actions" style="margin-top:6px;">
+                    <button id="tmEditLocateConflictBtn" class="btn-secondary" type="button" style="display:none;">定位冲突条目</button>
+                    <button id="tmEditKeepCurrentBtn" class="btn-secondary" type="button" style="display:none;">保留当前译文</button>
+                    <button id="tmEditUseConflictBtn" class="btn-secondary" type="button" style="display:none;">采用冲突译文</button>
+                </div>
+            </div>
+            <div class="tm-modal-actions">
+                <button id="tmEditCancelBtn" class="btn-secondary" type="button">取消</button>
+                <button id="tmEditSaveBtn" class="btn-save" type="button">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+
+</html>
