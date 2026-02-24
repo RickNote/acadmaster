@@ -108,7 +108,7 @@ input,
     border-bottom: 1px solid var(--border-light);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding: 0 24px;
     position: fixed;
     top: 0;
@@ -140,16 +140,14 @@ input,
 }
 
 .nav-middle {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     justify-content: flex-start;
     gap: 12px;
     background: transparent;
     margin: 0;
     height: 54px;
     padding: 0 8px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: thin;
+    overflow: hidden;
 }
 
 .nav-middle > * {
@@ -159,9 +157,7 @@ input,
 .nav-right {
     flex: 0 0 auto;
     gap: 6px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: thin;
+    overflow: hidden;
 }
 
 .toolbar-module {
@@ -230,6 +226,7 @@ input,
 }
 
 #docTitle {
+    display: none;
     font-size: 14px;
     font-weight: 600;
     color: var(--text-main);
@@ -657,7 +654,7 @@ body.loaded .overlay {
 }
 
 #searchInput {
-    width: 190px;
+    width: 150px;
     border: none;
     background: transparent;
     outline: none;

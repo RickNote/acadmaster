@@ -18,6 +18,11 @@
     "file:///*"
   ],
   "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "web_accessible_resources": [
     {
       "resources": [
@@ -50,21 +55,23 @@
   "action": {
     "default_popup": "src/popup/popup.html",
     "default_icon": {
-      "16": "icons/icon16.svg",
-      "48": "icons/icon48.svg",
-      "128": "icons/icon128.svg"
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
     }
   },
   "commands": {
     "translate_selection": {
       "suggested_key": {
-        "default": "Alt+Shift+X"
+        "default": "Alt+Shift+X",
+        "windows": "Ctrl+Shift+X"
       },
       "description": "Translate selected text"
     },
     "translate_document": {
       "suggested_key": {
-        "default": "Alt+Shift+D"
+        "default": "Alt+Shift+D",
+        "windows": "Ctrl+Shift+D"
       },
       "description": "Translate entire document"
     }

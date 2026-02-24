@@ -331,7 +331,19 @@ if (!ui) {
 
     // --- Keyboard Shortcuts ---
     document.addEventListener('keydown', (e) => {
-        if (e.altKey && e.shiftKey && e.key.toLowerCase() === 'd') {
+        const key = (e.key || '').toLowerCase();
+        const isSelectionShortcut = (e.shiftKey && e.altKey && (key === 'x' || e.code === 'KeyX')) || (e.shiftKey && e.ctrlKey && !e.altKey && (key === 'x' || e.code === 'KeyX'));
+        const isDocumentShortcut = (e.shiftKey && e.altKey && (key === 'd' || e.code === 'KeyD')) || (e.shiftKey && e.ctrlKey && !e.altKey && (key === 'd' || e.code === 'KeyD'));
+
+        if (isSelectionShortcut) {
+            e.preventDefault();
+            const shortcutSelection = getSelectionText();
+            if (shortcutSelection) {
+                state.selection = shortcutSelection;
+            }
+            handleTranslationParams(state.selection || shortcutSelection);
+        }
+        if (isDocumentShortcut) {
             e.preventDefault();
             handleDocumentTranslation();
         }

@@ -982,7 +982,7 @@ async function translateText(text, tabId, options) {
     requestCount++;
 
     try {
-        const { engine, targetLang, mode, profile = 'default', context = '', taskId = '' } = options;
+        const { engine, targetLang = 'zh-CN', mode, profile = 'default', context = '', taskId = '' } = options;
         if (taskId && isTaskCanceled(taskId)) {
             throw new Error('任务已取消');
         }
@@ -1140,7 +1140,7 @@ async function saveToHistory(original, translated, engine, targetLang, detectedL
  * Auto-falls back to Google Translate if configured engine fails.
  */
 async function translateSingle(text, options) {
-    const { engine, targetLang, profile = 'default', context = '' } = options;
+    const { engine, targetLang = 'zh-CN', profile = 'default', context = '' } = options;
     const settings = await getSettings();
     const glossary = settings.glossaryEnabled === false ? [] : normalizeGlossary(settings.termGlossary);
 

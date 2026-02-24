@@ -1,4 +1,21 @@
-<svg width="128" height="128" xmlns="http://www.w3.org/2000/svg">
-  <rect width="128" height="128" fill="#0078d4"/>
-  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="64.0" fill="white" font-weight="bold">E</text>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg128" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="26" fill="url(#bg128)"/>
+  <!-- Graduation cap -->
+  <polygon points="64,14 16,38 64,62 112,38" fill="white" opacity="0.95"/>
+  <polyline points="30,44 30,70 64,86 98,70 98,44" fill="none" stroke="white" stroke-width="4" stroke-linejoin="round" opacity="0.85"/>
+  <line x1="64" y1="62" x2="64" y2="86" stroke="white" stroke-width="3.5" opacity="0.85"/>
+  <circle cx="64" cy="86" r="3" fill="white" opacity="0.85"/>
+  <!-- Tassel -->
+  <line x1="112" y1="38" x2="112" y2="60" stroke="white" stroke-width="3.5" opacity="0.8"/>
+  <circle cx="112" cy="62" r="4" fill="white" opacity="0.8"/>
+  <!-- A→文 translation symbol -->
+  <text x="24" y="118" font-family="Arial,sans-serif" font-size="34" font-weight="bold" fill="white" opacity="0.9">A</text>
+  <text x="54" y="116" font-family="Arial,sans-serif" font-size="24" fill="white" opacity="0.7">→</text>
+  <text x="76" y="118" font-family="sans-serif" font-size="34" font-weight="bold" fill="white" opacity="0.9">文</text>
 </svg>
